@@ -25,7 +25,9 @@ Here it is not a question of predicting a value per image, but of predicting eac
   - IoU (Intersection over Union) or Jaccard Index (the most used). It is the intersection area (between prediction and mask) divided by the union area = I / U.
             For the multiclass classification, the average must be taken over all the classes 
   - Dice Coefficient (F1 Score): 2 * area of the intersection divided by the total number of pixels in the two images. = 2 * I / (2 * Pixels) 
-  - Focal Tversky etc.
+ ![Dice](dice.png)
+ 
+ - Focal Tversky etc.
   3. Loss Functions:  Loss functions tested are those commonly used in this type of problem:
   - Dice Loss is used to calculate the overlap between the predicted class and the ground truth class. Our goal is to minimize 1- overlap between the class of predicted truth and ground truth.
   - Since cross entropy evaluates class predictions for each pixel vector individually and then averages over all pixels, we are essentially asserting equal learning for every pixel in the image. This can be a problem if your different classes have an unbalanced representation in the image, as the formation can be dominated by the most prevalent class
@@ -39,11 +41,15 @@ Here it is not a question of predicting a value per image, but of predicting eac
 
 To apply these transformations, we decided to use the [Albumentations library](https://pypi.org/project/albumentations/), which also allows us to maintain consistency between the images and the segmentation masks.
 
+![Transform](transformed.png)
+
 ## Unet Model
   
   As said earlier, here we have to choose the family of models of the encoder/decoder type. Here, the architecture consists of two paths:
   1. Encoder path — The left side of the “U” shaped architecture is called the encoder path/contraction. This path consists of a convolutional layer stack and a maximum pooling layer. This is used to capture the context of the image.
   2. Decoder path — The right side of the “U” shaped architecture is called the decoder/extension path. The path consists of transposed convolutional layers. This is used to extend the precise localization (spatialization).
+
+![Unet](unet.png)
 
 It is an end-to-end Fully Convolutional Network (FCN). It can accept any image size because it has no fully connected dense layers.
 
@@ -51,15 +57,21 @@ It is an end-to-end Fully Convolutional Network (FCN). It can accept any image s
 
 For our base case we used a mini Unet network with 3 convolution blocks in the encoder and 2 deconvolution blocks, followed by an output block for the deconvolution and output phase. Unsurprisingly, the model being shallow, cannot distinguish the details well and even confuses the large masses with each other. It gets a Dice score of around 0.68 on the validation game. Below are examples of predictions from this model.
 
+![bl_result](bl_result.png)
+
   ### Transfer Learning
 
 In order to obtain better results, we tested the transfer learning on a pretrained EfficientNet type model. This is a [Google model](https://ai.googleblog.com/2019/05/efficientnet-improving-accuracy-and.html), trained on 1.5 million images. We used the first (about 50%) layers of Efficient net as an encoder to extract a number of common features. The image therefore passes through the encoder, decreasing in size with each layer, but extracting more and more features. The encoder being frozen at first, we only trained the decoder on our data set. Once the decoder was trained we freed up 10% encoder layers in order to fine-tune the entire model. This approach gave the best results with a Dice score of more than 0.9 on the validation game.
 
+![tl_result](tl_result.png)
+
 ## Results
 
 Here is an example of a prediction coming out of this model. We clearly see that the first pedestrians and the first objects (traffic light) begin to appear. Below is the confusion matrix emerging from this model:
- 
 
+![confusion](confusion.png)
+ 
+ 
 We can therefore see what we have already seen in the photo, it is that the classes less well represented are the small classes, humans and objects. Objects are often confused with construction or nature while humans are confused with construction and vehicles.
 
 For the other classes, the rate of true positives is quite high.
@@ -68,3 +80,4 @@ For the other classes, the rate of true positives is quite high.
 ## Flaask Rest API
 The model is deployed as endpoint on Azure, via simple Flask webpage. 
 
+![flask](flask.png)
