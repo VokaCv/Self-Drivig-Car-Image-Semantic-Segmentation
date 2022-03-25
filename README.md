@@ -13,23 +13,23 @@ Here is an example of creating an AI model for on-board computer vision systems 
 In this repository we focus on 3.'Image segmentation' part. The goal will be to design a first image segmentation model that should be easily integrated into the fully embedded IoT system.
 
 ## Dataset
-the model is creted and tested on [Cityscapes Dataset](https://www.cityscapes-dataset.com/dataset-overview/)
 
-## Dependencies
+The model is creted and tested on [Cityscapes Dataset](https://www.cityscapes-dataset.com/dataset-overview/)
 
-The notebooks were developed using the Microsoft Azure Machine Learning Studio web interface.
+## Metrics
 
-All dependencies are listed in `*.yml` files.
 
-All scripts are available in the `/scripts` folder.
+## Image transformation
 
-## Installation of conda and packages
 
-To use notebooks, import this project into Microsoft Azure Machine Learning Studio.
+## Unet Model
 
-- Launch a calculation instance.
-- Open a terminal and go to the project directory:
-- Create a conda virtual environment and install the dependencies:
-```
-./conda_create_env.sh
-``` 
+  ### Transfer Learning
+  
+
+## Results
+
+
+## Flaask Rest API
+The model is deployed as endpoint on Azure, via simple Flask webpage
+
