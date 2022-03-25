@@ -1,0 +1,6 @@
+azureml-defaults
+azureml-dataset-runtime
+matplotlib
+numpy
+pandas
+Flask
