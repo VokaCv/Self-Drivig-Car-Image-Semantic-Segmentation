@@ -12,6 +12,9 @@ Here is an example of creating an AI model for on-board computer vision systems 
 
 In this repository we focus on 3.'Image segmentation' part. The goal will be to design a first image segmentation model that should be easily integrated into the fully embedded IoT system.
 
+## Dataset
+the model is creted and tested on [Cityscapes Dataset](#https://www.cityscapes-dataset.com/dataset-overview/)
+
 ## Dependencies
 
 The notebooks were developed using the Microsoft Azure Machine Learning Studio web interface.
