@@ -77,7 +77,7 @@ We can therefore see what we have already seen in the photo, it is that the clas
 For the other classes, the rate of true positives is quite high.
 
 
-## Flaask Rest API
+## Flask Rest API
 The model is deployed as endpoint on Azure, via simple Flask webpage. 
 
 ![flask](flask.png)
