@@ -23,7 +23,15 @@ import numpy as np
 
 IMAGE_RES = (256,512) # H x W
 
-def dice_coeff(y_true, y_pred):
+def dice_coeff(y_true: np.array(), y_pred: np.array()) -> float():
+    """_summary_
+
+    :param y_true: _description_
+    :type y_true: _type_
+    :return: _description_
+    :rtype: _type_
+    """
+
     # expects y_true and y_pred reduced to 2D (H x W , Classes)
     
     smooth = 1.
@@ -38,13 +46,29 @@ def dice_coeff(y_true, y_pred):
 
     return score
 
-def dice_loss(y_true, y_pred):
-    'set to 1- so it tends to 0, and we can set minimize to compiler'
+def dice_loss(y_true: np.array(), y_pred: np.array()) -> float():
+    """_summary_
+
+    :param y_true: _description_
+    :type y_true: _type_
+    :return: _description_
+    :rtype: _type_
+    """
+
+    # set to 1- so it tends to 0, and we can set minimize to compiler
     loss = 1 - dice_coeff(y_true, y_pred)
     return loss
 
-def dice_test(y_true, y_pred):
-    'instead of class DiceMetric'
+def dice_test(y_true: np.array(), y_pred: np.array()) -> float():
+    """_summary_
+
+    :param y_true: _description_
+    :type y_true: _type_
+    :return: _description_
+    :rtype: _type_
+    """
+
+    # instead of class DiceMetric
     # Note: the type float32 is very important. It must be the same type as the output from
     # the python function above or you too may spend many late night hours 
     # trying to debug and almost give up.
@@ -92,45 +116,13 @@ class DiceMetric(tf.keras.metrics.Metric):
         # Required in Tensorflow < 2.5.0
         return self.reset_state()        
 
-# class IoU(tfa.metrics.FBetaScore):
-#     """Score IoU"""
-#     def __init__(
-#         self,
-#         num_classes,
-#         average='micro',
-#         threshold=None,
-#         name="IoU",
-#         dtype=None,
-#     ):
-#         super().__init__(num_classes, average, 1.0, threshold, name=name, dtype=dtype)
-
-#     def update_state(self, y_true, y_pred, sample_weight=None):
-#         y_true = tf.reshape(y_true, (-1, self.num_classes))
-#         y_pred = tf.reshape(y_pred, (-1, self.num_classes))
-#         super().update_state(y_true=y_true, y_pred=y_pred, sample_weight=sample_weight)
-
-#     def result(self):
-#         iou = tf.math.divide_no_nan(
-#             self.true_positives, self.true_positives + self.false_positives + self.false_negatives
-#         )
-        
-#         if self.average == "weighted":
-#             weights = tf.math.divide_no_nan(
-#                 self.weights_intermediate, tf.reduce_sum(self.weights_intermediate)
-#             )
-#             iou = tf.reduce_sum(iou * weights)
-
-#         elif self.average is not None:  # [micro, macro]
-#             iou = tf.reduce_mean(iou)
-
-#         return iou
-
-#     def get_config(self):
-#         base_config = super().get_config()
-#         del base_config["beta"]
-#         return base_config
 
 class DiceLossCls(tf.keras.losses.Loss):
+    """_summary_
+
+    :param tf: _description_
+    :type tf: _type_
+    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -138,34 +130,10 @@ class DiceLossCls(tf.keras.losses.Loss):
         dice = dice_loss(y_true, y_pred)
         return dice
 
-# def single_conv_block(tensor, nfilters, size=3, padding='same', initializer="he_normal"):
-#     x = Conv2D(filters=nfilters, kernel_size=(size, size), padding=padding, kernel_initializer=initializer)(tensor)
-#     x = Activation("relu")(x)
-#     return x
-
-# def conv_block(tensor, nfilters, size=3, padding='same', initializer="he_normal"):
-#     x = Conv2D(filters=nfilters, kernel_size=(size, size), 
-#                 padding=padding, kernel_initializer=initializer
-#                 )(tensor)
-#     x = BatchNormalization()(x)
-#     x = Activation("relu")(x)
-
-#     x = Conv2D(filters=nfilters, kernel_size=(size, size), 
-#                 padding=padding, kernel_initializer=initializer
-#                 )(x)
-#     x = BatchNormalization()(x)
-#     x = Activation("relu")(x)
-#     return x
-
-# def deconv_block(tensor, residual, nfilters, size=3, padding='same', strides=(2, 2)):
-#     y = Conv2DTranspose(nfilters, kernel_size=(size, size), strides=strides, padding=padding)(tensor)
-#     y = concatenate([y, residual], axis=3)
-#     y = conv_block(y, nfilters)
-#     return y
-
 
 def conv_block(tensor, nfilters, size=3, padding='same', 
                initializer="he_normal", nb_blocks=1):
+    ''' Create convolution block'''
 
     #add at least one, and if nb_blocks > 1 add others
     x = Conv2D(filters=nfilters, kernel_size=(size, size), 
@@ -184,6 +152,7 @@ def conv_block(tensor, nfilters, size=3, padding='same',
 
 def deconv_block(tensor, residual, nfilters, size=3, 
                  padding='same', strides=(2, 2), nb_conv_blocks=2):
+    ''' Create deconvolution block'''
 
     y = Conv2DTranspose(nfilters, kernel_size=(size, size), 
                         strides=strides, padding=padding

@@ -16,27 +16,6 @@ from model_and_metrics import DiceLossCls, DiceMetric
 
 from pathlib import Path
 
-# global hierarchy
-# global files
-
-# hierarchy = {}
-# def list_files(dir, loop_subfolders=True):
-#     with os.scandir(dir) as it:
-#         files = []
-#         for iter in it:
-#             if iter.is_dir():
-#                 if loop_subfolders == True:
-#                     list_files(dir=iter, loop_subfolders=True)
-#                 else:
-#                     pass
-
-#             elif iter.is_file():
-#                 files.append(iter.name)
-            
-#         print(files)
-#         hierarchy[dir.name] = files
-#     return hierarchy
-
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
@@ -45,6 +24,8 @@ class NumpyArrayEncoder(JSONEncoder):
 
 
 def label_to_mask(mask, classes=""):
+    ''' define label colors here'''
+
     # iterate here with classes
     label_to_color = {
                         0: [0  ,   0,   0],
@@ -95,13 +76,13 @@ def init():
     #                         "outputs", "best_model")
     MODEL_PATH_FOLDER = os.getenv("AZUREML_MODEL_DIR")
 
-    WS_NAME = 'p8_ws'
-    SUBSCRIPTION_ID_FREE_STUDENTS = 'd4258567-1f40-439d-93e3-23364c743517'
-    RESSOURCE_GROUP = 'OpenClassroms'
+    WS_NAME = ''
+    SUBSCRIPTION_ID_FREE_STUDENTS = ''
+    RESSOURCE_GROUP = ''
 
-    TENANT_ID = '7b9caa82-28df-475e-a0a7-01fd6a94aeb8'
-    APP_ID ='2bd162b6-d683-4430-b122-e3ad47e0b076'
-    APP_PASSWORD = 'FnU7Q~wHO9ONt.YOgy0VEy61a5F1A8YAoMgaF'
+    TENANT_ID = ''
+    APP_ID =''
+    APP_PASSWORD = ''
 
     if (MODEL_PATH_FOLDER==None):
         MODEL_PATH_FOLDER = '.'
@@ -207,19 +188,11 @@ def run(raw_data):
     y_pred_numpyData = {"pred": mask_3D}
     encoded_pred = json.dumps(y_pred_numpyData, cls=NumpyArrayEncoder)  
 
-    # TEST HERE THE FOLDER HIERARCHY IN AZURE
-    # path = Path(model_path_folder)
-    # return_dic = list_files(path)
-
     return_dic = {}
     return_dic['image'] = encoded_img
     return_dic['mask'] = encoded_mask
     return_dic['pred'] = encoded_pred
 
-    # return_dic = {}
-    # return_dic['image'] = 1
-    # return_dic['mask'] = 2
-    # return_dic['pred'] = 3
     return return_dic
 
 if __name__ == '__main__ ':
